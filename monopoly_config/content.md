@@ -1,8 +1,10 @@
 # Monopoly Design Challenge
 
-In this assignment, you’ll gradually extend and improve your Monopoly simulation code. You’ll start with the original program from `monopoly_realistic.py` and, step by step, add new features and refactor parts of the code.
+In this assignment, you will practice working with dictionaries by gradually redesigning your Monopoly simulation. The focus of this exercise is not to expand the game with many new rules, but to apply the dictionary patterns you have just learned in a practical way. The Monopoly game is a nice example because it has lots of configuration values, property ownership to track, and events we can count. This will allow us to work through multiple dictionary patterns step by step.
 
-By the end of this assignment, you’ll have a more flexible, better-structured simulation that uses dictionaries and sets to make the game configuration easier, the code cleaner, and the simulation more efficient.
+You’ll start with the original program from `monopoly_realistic.py` and, step by step, add new features and refactor parts of the code.
+
+Aside from just practicing with dictionaries, by the end of this assignment, you’ll have a more flexible, better-structured Monopoly simulation. The simulation will use dictionaries and sets to make the game configuration easier, the code cleaner, and the simulation more efficient.
 
 > Refactoring — improving the structure of existing code without changing its behavior — can be tricky and error-prone. To avoid spending too much time debugging, you should **test your program after every small change**. Use the provided tests regularly to ensure that everything still works as expected.
 >
@@ -16,107 +18,122 @@ Throughout this exercise, you will be able to use the following `checkpy` comman
 
     checkpy monopoly_dicts
 
-Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you two green checks!
+Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you two green checks! <!--TODO check if this is correct -->
 
 ### Step 1: replacing the function headers
 
-In this step we will introduce the `board_config` dictionary, which collects all important game settings in one place. Instead of scattering values like the money you will receive when you complete a lap or something like property prices across your code, we’ll pass them in as a single configuration dictionary:
+The first thing we will do is to collect important game settings into a dictionary named `board_config`. For now, copy the following dictionary into your `main()` function:
 
     board_config = {
-        "lap_money": 200,      # money earned when passing Start
-        "board_size": 40,      # number of spaces on the board
-        "properties": {        # mapping from board position → price
-            1: 60, 3: 60, 5: 200, 6: 100, 8: 100, 9: 120, 11: 140, 12: 150, 13: 140, 14: 160, 15: 200, 16: 180, 18: 180, 19: 200, 21: 220, 23: 220, 24: 240, 25: 200, 26: 260, 27: 260, 28: 150, 29: 280, 31: 300, 32: 300, 34: 320, 35: 200, 37: 350, 39: 400
+        "board_size": 40,               # number of spaces on the board
+        "lap_money": 200,               # money earned when passing Start
+        "starting_money": [1500, 1500]  # starting money for player 1 and player 2
+    }
+
+> This is a very common pattern (see *'2. Config/attributes'* in the theory), and instead of scattering these values throughout your code, we’ll pass them in as a single configuration dictionary. In essence, we’re separating *configuration* (properties of the game, like: prices, board size, lap income, starting money) from *simulation logic* (what the game does: move, buy, pay). Using a config dictionary makes your code easier to change and test. For example, you could change the board size or give the players a different starting balance without touching the game logic at all.
+
+Update the function header of the `simulate_monopoly_games()` and `simulate_monopoly()` function to accept `board_config` as an argument:
+
+    def simulate_monopoly_games(games, board_config):
+        ...
+
+
+    def simulate_monopoly(board_config):
+        ...
+
+You will also need to update all the lines where `simulate_monopoly_games()` or `simulate_monopoly()` are called. You can directly pass both the variable `board_config`.
+
+Now replace the hardcoded values in your code with dictionary lookups (see theory *'0. Fast search'*):
+* Use the board size from the `board_config` dictionary to decide when to wrap around the board.
+* Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
+* Initialize player balances using the starting money from the `board_config` dictionary. This entry is a list where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
+
+Test your code using `checkpy`. You should pass 3 more tests. <!--TODO check if this is correct -->
+
+### Step 2: properties as a nested dictionary
+
+So far, your configuration dictionary contains simple values and a list. Next, we’ll extend it with a nested dictionary that maps board positions to property prices. Replace your `board_config` dictionary with:
+
+    board_config = {
+        "board_size": 40,               # number of spaces on the board
+        "lap_money": 200,               # money earned when passing Start
+        "starting_money": [1500, 1500], # starting money for player 1 and player 2
+        "properties": {                 # property prices per board position
+          1: 60, 3: 60, 5: 200, 6: 100, 8: 100, 9: 120,
+          11: 140, 12: 150, 13: 140, 14: 160, 15: 200,
+          16: 180, 18: 180, 19: 200, 21: 220, 23: 220,
+          24: 240, 25: 200, 26: 260, 27: 260, 28: 150,
+          29: 280, 31: 300, 32: 300, 34: 320, 35: 200,
+          37: 350, 39: 400,
         }
     }
 
-This is very common in simulation and modelling. In essence, we’re separating *configuration* (properties of the game, like: prices, board size, lap income, starting money) from the *simulation logic* (what the game does: move, buy, pay). By using this dictionary as a parameter in your simulation functions, the game becomes more flexible and easier to test. It becomes possible to swap in different configurations, for example, with a bigger board, a different lap income, or alternative property prices, without having to change the simulation logic itself.
+Then, update your code so that whenever you need the price of a property, you retrieve it from the properties entry in the `board_config` dictionary.
 
-Update the function header of the `simulate_monopoly_games()` and `simulate_monopoly()` function to accept `board_config` and `starting_money` as inputs. For now, we'll hardcode starting_money_p1 and starting_money_p2
+Remember that not every position on the board is a property and has a price! Any position not listed in the properties dictionary does not have an associated price, and cannot be bought.
 
-    def simulate_monopoly_games(games, board_config, starting_money):
-        ...
+> This gives you more practice with what we call a nested lookup, first in the config dictionary, then in the properties dictionary. We also continue the pattern from step 1: your game logic no longer depends on magic numbers, but on lookups in the config (*'0. Fast search'* and *'2. Config/attributes'*).
 
+Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
 
-    def simulate_monopoly(board_config, starting_money):
-        starting_money_p1 = 1500 # temporary
-        starting_money_p2 = 1500 # temporary
+### Step  3: tracking ownership
 
-        ...
+To decide whether a property can still be purchased, we need to know which ones have already been bought. You may currently be keeping track of which properties each player owns with a counter or a list. We will improve this by using sets, because sets automatically prevent duplicates and make membership checks efficient. Each player will have their own set of owned properties, and together these sets show which tiles are already taken.
 
-You will also need to change the lines where `simulate_monopoly()` is called inside of your `simulate_monopoly_games()` function. You can directly pass the variables `board_config` and `starting_money` for now.
+To make this step easier to follow, we’ll do it in two parts. First, you will write a small helper function that checks whether a property at a given position is already owned by any player. Then, you will rewrite the code tracking player ownership, and integrate the helper function into the rest of the code.
 
-Test your code using `checkpy`. You should pass 3 more tests!
+#### Step 3.1: checking ownership
 
-### Step 2: Integrating function parameters
+Write a helper function named `is_unowned(position, owned_sets)`, where `position` is an index on the board, and `owned_sets` is a list of all player ownership sets. The function should return `True` if the position is not in any of the ownership sets, and return `False` if any player owns it.
 
-In the previous step you've temporarily hardcoded the starting money for both players. Now we’ll stop hardcoding and use the values passed in. This makes it easy to run the same simulation with different initial conditions.
+Before continuing, test your function on a tiny example. You can use something like the test below in your file, or run it in a separate test-file with a copy of your function.
 
-Use the values from the `starting_money` parameter instead of the fixed numbers from step 1. `starting_money` should be a list where each entry is the starting balance of a player, e.g. `[1500, 1500]`.
+    print(is_unowned(14, [{12, 16}, {18}])) # expected: True
 
-> By providing the `starting_money` as a list, you can add more players later without changing the function!
+    print(is_unowned(18, [{12, 16}, {18}])) # expected: False
 
-Somewhere in your code you should have defined the value for the money a player gets when they complete a lap. Replace any hardcoded “lap income” with the value from `board_config`.
+Then, test your code using `checkpy`.
 
-Test your code using `checkpy`. You should pass 3 more tests after starting use of the `starting_money` parameter, and 3 more after starting use of the `'lap_money'` from `board_config`.
+#### Step 3.2: integrating ownership
 
-### Step 3: using sets
-
-So far, you have probably tracked player ownership with lists. In this step, we will switch these to sets. A set automatically prevents duplicates, makes membership checks faster, and will make it easier to implement code that finds buyable properties later on.
+Now change your code so that ownership is tracked with sets rather than counters or lists. At the start of each game, create an empty set for every player. Whenever a player buys a property, add the position of that property to their set.
 
 > Remember: `{}` creates a dictionary, not a set. To create an empty set, always use `set()`.
 
-Update your code so that each player’s properties are stored in a set. This will probably also affect your code in multiple places, so it might be more efficient to find and mark those places first with a small comment!
+With this change in place, integrate the `is_unowned()` helper function inside your game loop. Keep in mind that this function only checks whether a position is already owned; you still need to decide separately whether the position is a property and whether the player can afford it.
 
-Test your code using `checkpy`. You should not pass more tests, but you shouldn't pass less tests either!
+This completes the transition to sets for tracking ownership and integrates your helper function into the rest of the game logic. If everything is wired up correctly, purchases should now only happen when a tile is actually available.
 
-### Step 4: finding buyable properties
+Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
 
-Now that properties are tracked with sets, it becomes easy to figure out which properties are still available for purchase. In this step you will implement a new function called `get_buyable_properties()`.
+### Checkpoint
 
-The `get_buyable_properties(board_properties, player_owned_properties)` function should take two arguments;
+At this point, your game should no longer depend on any hardcoded numbers for board size, lap money, starting balances, or property prices. Everything should come directly from the `board_config` dictionary. Double check that:
+- movement around the board uses the value from the configuration dictionary
+- rewards for completing a lap is determined by the value from the configuration dictionary
+- player balances are initialized from the configuration dictionary
+- property prices come from the configuration dictionary
+- player properties are tracked in sets,
+- player properties are tracked in sets, and the `is_unowned()` function is used to determine whether a property is not yet owned by any of the players
+- all `checkpy` checks pass
 
-- `board_properties`: the dictionary containing all the properties that are on the board
-- `player_owned_properties`: a list of sets with properties owned by each player
+All these changes make it much easier to change the configuration without touching the simulation code! This is exactly the separation of configuration and simulation logic we are aiming for.
 
-The first argument is directly available from `board_config['properties']`. The second argument was introduced in the previous step.
+### Step 4: counting visits
 
-The function should return a set containing all properties that can still be bought.
+The last thing we will practice with our Monopoly simulation is the counting pattern (see theory 3. Counting). Instead of changing the rules of the game, we will use this pattern to collect statistics about how often each position on the board is visited.
 
-You can test your function manually with a simple toy problem before using it on the entire `board_config`:
+To prevent this code from affecting your earlier tests, do this step in a separate file named `monopoly_visits.py`. Copy your `simulate_monopoly()` function (and any of the helper functions you need) into this file and adapt it so it also records which positions are visited during the game.
 
-    board = {14: 100, 18: 150, 23: 200}
+Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that Start (position 0) should also be included whenever a player passes or lands on it!
 
-    print(get_buyable_properties(board, [set(), {18}]))
+When you are confident the counting works, explore the results:
 
-Should print:
+- Print a small summary, for example the five most visited positions.
+- Save a bar chart of the results using `matplotlib`, with positions on the x-axis and visit counts on the y-axis. Make sure your plot is easy to read and clearly shows what the data represents. Think about how you would normally present a plot to someone else: what would make it understandable at a glance? Save your plot as `visits.png`.
 
-    {14, 23}
+This step does not include checks from `checkpy`.
 
-After testing your function manually, test it using `checkpy`. You should pass one more test.
+<!-- TODO: afsluitend stukje? -->
 
-### Step 5: integrating properties
-
-Up until now, some parts of your code may still rely on hardcoded values for property prices or board length. In this step you will integrate the last information stored in `board_config` so that the game no longer depends on any hardcoded values.
-
-The dictionary `board_config` from step 1 already provides `'properties'` and `'board_size'`, a mapping from board position to purchase price and the number of spaces on the board respectively.
-
-Start by updating your code so that movement around the board uses the value of `'board_size'` from the `board_config` dictionary. Test this first, to make sure movement still works.
-
-Then, update your code such that whenever you need the price of a property, you look it up in `board_config['properties']`. This will probably require you to do multiple changes. Identify those first, before changing any code.
-
-> Hint: you can use your `get_buyable_properties()` function to keep track of which properties are still for sale. Update this set whenever a property is bought. A property can only be purchased if:
-> – its index is still in `buyable_properties`, and
-> – the player has enough money.
->
-> Also consider your loop condition: you can use the size of buyable_properties to decide when the game should end (once no properties remain).
-
-Test your code using `checkpy`. You should pass 1 more test after using the `board_size` value, and 1 more after using the `properties`.
-
-<!-- TODO: tests voor dit gedeelte -->
-
-<!-- TODO: step 6, counting ring heatmap/histogram waarin je bijhoudt hoe vaak ieder vakje bezocht is + tests hiervoor?? Of misschien gewoon een voorbeeld voor hoe dit er uit komt te zien-->
-
-<!-- TODO: afsluitend stukje -->
-
-<!-- TODO: bonus met meer spelers, dictionary per speler. Aanmaken van deze dict in een losse functie.-->
+<!-- TODO: bonus met meer spelers op basis van werk simon, dictionary per speler. Aanmaken van deze dict in een losse functie.-->
