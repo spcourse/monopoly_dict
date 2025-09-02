@@ -135,5 +135,3 @@ When you are confident the counting works, explore the results:
 This step does not include checks from `checkpy`.
 
 <!-- TODO: afsluitend stukje? -->
-
-<!-- TODO: bonus met meer spelers op basis van werk simon, dictionary per speler. Aanmaken van deze dict in een losse functie.-->
