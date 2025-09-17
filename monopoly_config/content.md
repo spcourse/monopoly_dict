@@ -10,7 +10,7 @@ Aside from just practicing with dictionaries, by the end of this assignment, you
 >
 > **We’ve set up this exercise and the accompanying tests so that you can verify your code after every step**.
 
-### Step 0: setup
+### Step 0: Setup
 
 Create a new file named `monopoly_dicts.py` and copy your code from `monopoly_realistic.py`. Remove the `equilibrium()` function, as you won't need it for this assignment.
 
@@ -20,13 +20,13 @@ Throughout this exercise, you will be able to use the following `checkpy` comman
 
 Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you two green checks! <!--TODO check if this is correct -->
 
-### Step 1: replacing the function headers
+### Step 1: Replacing the function headers
 
 The first thing we will do is to collect important game settings into a dictionary named `board_config`. For now, copy the following dictionary into your `main()` function:
 
     board_config = {
         "board_size": 40,               # number of spaces on the board
-        "lap_money": 200,               # money earned when passing Start
+        "lap_money": 200,               # money earned when passing start
         "starting_money": [1500, 1500]  # starting money for player 1 and player 2
     }
 
@@ -41,22 +41,22 @@ Update the function header of the `simulate_monopoly_games()` and `simulate_mono
     def simulate_monopoly(board_config):
         ...
 
-You will also need to update all the lines where `simulate_monopoly_games()` or `simulate_monopoly()` are called. You can directly pass both the variable `board_config`.
+You will also need to update all the lines where `simulate_monopoly_games()` or `simulate_monopoly()` are called. You can directly pass both functions the variable `board_config`.
 
 Now replace the hardcoded values in your code with dictionary lookups (see theory *'0. Fast search'*):
 * Use the board size from the `board_config` dictionary to decide when to wrap around the board.
 * Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
-* Initialize player balances using the starting money from the `board_config` dictionary. This entry is a list where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
+* Initialize player balances using the starting money from the `board_config` dictionary. This is a list where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
 
 Test your code using `checkpy`. You should pass 3 more tests. <!--TODO check if this is correct -->
 
-### Step 2: properties as a nested dictionary
+### Step 2: Properties as a nested dictionary
 
-So far, your configuration dictionary contains simple values and a list. Next, we’ll extend it with a nested dictionary that maps board positions to property prices. Replace your `board_config` dictionary with:
+So far, your configuration dictionary contains simple values and a list. Next, we’ll extend it with a nested dictionary that maps board positions to property prices. Extend your `board_config` dictionary with:
 
     board_config = {
         "board_size": 40,               # number of spaces on the board
-        "lap_money": 200,               # money earned when passing Start
+        "lap_money": 200,               # money earned when passing start
         "starting_money": [1500, 1500], # starting money for player 1 and player 2
         "properties": {                 # property prices per board position
           1: 60, 3: 60, 5: 200, 6: 100, 8: 100, 9: 120,
@@ -76,17 +76,17 @@ Remember that not every position on the board is a property and has a price! Any
 
 Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
 
-### Step  3: tracking ownership
+### Step 3: Tracking ownership
 
 To decide whether a property can still be purchased, we need to know which ones have already been bought. You may currently be keeping track of which properties each player owns with a counter or a list. We will improve this by using sets, because sets automatically prevent duplicates and make membership checks efficient. Each player will have their own set of owned properties, and together these sets show which tiles are already taken.
 
 To make this step easier to follow, we’ll do it in two parts. First, you will write a small helper function that checks whether a property at a given position is already owned by any player. Then, you will rewrite the code tracking player ownership, and integrate the helper function into the rest of the code.
 
-#### Step 3.1: checking ownership
+#### Step 3.1: Checking ownership
 
 Write a helper function named `is_unowned(position, owned_sets)`, where `position` is an index on the board, and `owned_sets` is a list of all player ownership sets. The function should return `True` if the position is not in any of the ownership sets, and return `False` if any player owns it.
 
-Before continuing, test your function on a tiny example. You can use something like the test below in your file, or run it in a separate test-file with a copy of your function.
+Before continuing, test your function on a tiny example. You can use something like the test below in your file, or run it in a separate test file with a copy of your function.
 
     print(is_unowned(14, [{12, 16}, {18}])) # expected: True
 
@@ -94,7 +94,7 @@ Before continuing, test your function on a tiny example. You can use something l
 
 Then, test your code using `checkpy`.
 
-#### Step 3.2: integrating ownership
+#### Step 3.2: Integrating ownership
 
 Now change your code so that ownership is tracked with sets rather than counters or lists. At the start of each game, create an empty set for every player. Whenever a player buys a property, add the position of that property to their set.
 
@@ -110,22 +110,22 @@ Test your code using `checkpy`. You should pass X more tests. <!--TODO check if 
 
 At this point, your game should no longer depend on any hardcoded numbers for board size, lap money, starting balances, or property prices. Everything should come directly from the `board_config` dictionary. Double check that:
 - movement around the board uses the value from the configuration dictionary
-- rewards for completing a lap is determined by the value from the configuration dictionary
+- rewards for completing a lap use the value from the configuration dictionary
 - player balances are initialized from the configuration dictionary
 - property prices come from the configuration dictionary
-- player properties are tracked in sets,
-- player properties are tracked in sets, and the `is_unowned()` function is used to determine whether a property is not yet owned by any of the players
+- player properties are tracked in sets
+- the `is_unowned()` function is used to determine whether a property is not yet owned by any of the players
 - all `checkpy` checks pass
 
 All these changes make it much easier to change the configuration without touching the simulation code! This is exactly the separation of configuration and simulation logic we are aiming for.
 
-### Step 4: counting visits
+### Step 4: Counting visits
 
-The last thing we will practice with our Monopoly simulation is the counting pattern (see theory 3. Counting). Instead of changing the rules of the game, we will use this pattern to collect statistics about how often each position on the board is visited.
+The last thing we will practice with our Monopoly simulation is the counting pattern (see theory *'3. Counting'*). Instead of changing the rules of the game, we will use this pattern to collect statistics about how often each position on the board is visited.
 
-To prevent this code from affecting your earlier tests, do this step in a separate file named `monopoly_visits.py`. Copy your `simulate_monopoly()` function (and any of the helper functions you need) into this file and adapt it so it also records which positions are visited during the game.
+To prevent this code from affecting your earlier tests, do this step in a separate file named `monopoly_visits.py`. Copy your `simulate_monopoly()` function into the new file, along with any helper functions that it directly calls. _You don’t need to copy everything — only the pieces required to make this function run on its own._
 
-Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that Start (position 0) should also be included whenever a player passes or lands on it!
+Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that _start_ (position 0) should also be included whenever a player passes or lands on it!
 
 When you are confident the counting works, explore the results:
 
