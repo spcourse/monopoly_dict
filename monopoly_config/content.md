@@ -44,11 +44,16 @@ Update the function header of the `simulate_monopoly_games()` and `simulate_mono
 You will also need to update all the lines where `simulate_monopoly_games()` or `simulate_monopoly()` are called. You can directly pass both functions the variable `board_config`.
 
 Now replace the hardcoded values in your code with dictionary lookups (see theory *'0. Fast search'*):
+
 * Use the board size from the `board_config` dictionary to decide when to wrap around the board.
 * Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
 * Initialize player balances using the starting money from the `board_config` dictionary. This is a list where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
 
-Test your code using `checkpy`. You should pass 3 more tests. <!--TODO check if this is correct -->
+> ⚠️ **Important:** The configuration dictionary **should not be part of the game state**. It describes the rules and setup of the game, but it should never change during a game.  
+>
+> Make sure you don’t overwrite (or add new) entries in `board_config` to track progress. You also should not use the starting money list as the actual money balances of players.  
+
+Test your code using `checkpy`. Proper implementation of `board_size` can not be tested here yet, and will be tested in the next step. For now, you should pass X more tests. <!--TODO check if this is correct -->
 
 ### Step 2: Properties as a nested dictionary
 
@@ -68,11 +73,13 @@ So far, your configuration dictionary contains simple values and a list. Next, w
         }
     }
 
-Then, update your code so that whenever you need the price of a property, you retrieve it from the properties entry in the `board_config` dictionary.
+Update your code so that whenever you need the price of a property, you retrieve it from the properties entry in the `board_config` dictionary.
 
-Remember that not every position on the board is a property and has a price! Any position not listed in the properties dictionary does not have an associated price, and cannot be bought.
+Remember that not every position on the board is a property and has a price! Any position not listed in the properties dictionary does not have an associated price, and cannot be bought. Also remember the warning from step 1: the configuration is read-only. Don’t be tempted to “mark” ownership by changing these prices or adding flags in the dictionary. Keep configuration and game state separate.
 
-> This gives you more practice with what we call a nested lookup, first in the config dictionary, then in the properties dictionary. We also continue the pattern from step 1: your game logic no longer depends on magic numbers, but on lookups in the config (*'0. Fast search'* and *'2. Config/attributes'*).
+Depending on your original implementation you might find that you need to adjust more than just the price lookup to make everything work. That’s normal. Keep your solutions simple for now and don’t put too much energy into solving who-owns-what's yet, because that is exactly what we’ll tackle in the next step. For now the important part is: prices live in the config, and game logic uses lookups rather than hardcoded numbers.
+
+> This step gives you more practice with what we call a nested lookup, first in the config dictionary, then in the properties dictionary. We also continue the pattern from step 1: your game logic no longer depends on magic numbers, but on lookups in the config (*'0. Fast search'* and *'2. Config/attributes'*).
 
 Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
 
@@ -92,7 +99,7 @@ Before continuing, test your function on a tiny example. You can use something l
 
     print(is_unowned(18, [{12, 16}, {18}])) # expected: False
 
-Then, test your code using `checkpy`.
+Then, test your function using `checkpy`. You should pass 1 more test.
 
 #### Step 3.2: Integrating ownership
 
@@ -109,12 +116,13 @@ Test your code using `checkpy`. You should pass X more tests. <!--TODO check if 
 ### Checkpoint
 
 At this point, your game should no longer depend on any hardcoded numbers for board size, lap money, starting balances, or property prices. Everything should come directly from the `board_config` dictionary. Double check that:
+
 - movement around the board uses the value from the configuration dictionary
 - rewards for completing a lap use the value from the configuration dictionary
 - player balances are initialized from the configuration dictionary
 - property prices come from the configuration dictionary
-- player properties are tracked in sets
 - the `is_unowned()` function is used to determine whether a property is not yet owned by any of the players
+- player properties are tracked in sets
 - all `checkpy` checks pass
 
 All these changes make it much easier to change the configuration without touching the simulation code! This is exactly the separation of configuration and simulation logic we are aiming for.
