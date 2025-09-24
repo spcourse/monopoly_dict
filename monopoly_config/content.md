@@ -18,7 +18,7 @@ Throughout this exercise, you will be able to use the following `checkpy` comman
 
     checkpy monopoly_dicts
 
-Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you two green checks! <!--TODO check if this is correct -->
+Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you three green checks!
 
 ### Step 1: Replacing the function headers
 
@@ -47,13 +47,13 @@ Now replace the hardcoded values in your code with dictionary lookups (see theor
 
 * Use the board size from the `board_config` dictionary to decide when to wrap around the board.
 * Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
-* Initialize player balances using the starting money from the `board_config` dictionary. This is a list where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
+* Initialize player balances using the starting money from the `board_config` dictionary. The value you should get from the configuration dictionary is a list, where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
 
-> ⚠️ **Important:** The configuration dictionary **should not be part of the game state**. It describes the rules and setup of the game, but it should never change during a game.  
+> ⚠️ **Important:** Make sure you don’t overwrite (or add new) entries in `board_config` to track progress. You should not use the starting money list as the actual money balances of players directly. This could cause your code to use these changed values the next time the function is called, which in turn changes the outcome! Instead, you should **copy** the values from the `board_config` dictionary.
 >
-> Make sure you don’t overwrite (or add new) entries in `board_config` to track progress. You also should not use the starting money list as the actual money balances of players.  
+> The configuration dictionary **should not be part of the game state**. It describes the rules and setup of the game, and should never be changed *during* a game.  
 
-Test your code using `checkpy`. Proper implementation of `board_size` can not be tested here yet, and will be tested in the next step. For now, you should pass X more tests. <!--TODO check if this is correct -->
+Test your code using `checkpy`. Proper implementation of `board_size` can not be tested here yet, and will be tested in the next step. For now, you should pass 8 more tests (for a total of 11). <!--TODO check if this is correct -->
 
 ### Step 2: Properties as a nested dictionary
 
@@ -81,7 +81,7 @@ Depending on your original implementation you might find that you need to adjust
 
 > This step gives you more practice with what we call a nested lookup, first in the config dictionary, then in the properties dictionary. We also continue the pattern from step 1: your game logic no longer depends on magic numbers, but on lookups in the config (*'0. Fast search'* and *'2. Config/attributes'*).
 
-Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
+Test your code using `checkpy`. You should pass 1 more test (for a total of 12).
 
 ### Step 3: Tracking ownership
 
@@ -99,7 +99,7 @@ Before continuing, test your function on a tiny example. You can use something l
 
     print(is_unowned(18, [{12, 16}, {18}])) # expected: False
 
-Then, test your function using `checkpy`. You should pass 1 more test.
+Test your function with (variations of) the tests above before continuing with the next step.
 
 #### Step 3.2: Integrating ownership
 
@@ -111,9 +111,9 @@ With this change in place, integrate the `is_unowned()` helper function inside y
 
 This completes the transition to sets for tracking ownership and integrates your helper function into the rest of the game logic. If everything is wired up correctly, purchases should now only happen when a tile is actually available.
 
-Test your code using `checkpy`. You should pass X more tests. <!--TODO check if this is correct -->
+Test your code using `checkpy`. You should now pass all tests.
 
-### Checkpoint
+### A complete redesign
 
 At this point, your game should no longer depend on any hardcoded numbers for board size, lap money, starting balances, or property prices. Everything should come directly from the `board_config` dictionary. Double check that:
 
@@ -126,20 +126,3 @@ At this point, your game should no longer depend on any hardcoded numbers for bo
 - all `checkpy` checks pass
 
 All these changes make it much easier to change the configuration without touching the simulation code! This is exactly the separation of configuration and simulation logic we are aiming for.
-
-### Step 4: Counting visits
-
-The last thing we will practice with our Monopoly simulation is the counting pattern (see theory *'3. Counting'*). Instead of changing the rules of the game, we will use this pattern to collect statistics about how often each position on the board is visited.
-
-To prevent this code from affecting your earlier tests, do this step in a separate file named `monopoly_visits.py`. Copy your `simulate_monopoly()` function into the new file, along with any helper functions that it directly calls. _You don’t need to copy everything — only the pieces required to make this function run on its own._
-
-Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that _start_ (position 0) should also be included whenever a player passes or lands on it!
-
-When you are confident the counting works, explore the results:
-
-- Print a small summary, for example the five most visited positions.
-- Save a bar chart of the results using `matplotlib`, with positions on the x-axis and visit counts on the y-axis. Make sure your plot is easy to read and clearly shows what the data represents. Think about how you would normally present a plot to someone else: what would make it understandable at a glance? Save your plot as `visits.png`.
-
-This step does not include checks from `checkpy`.
-
-<!-- TODO: afsluitend stukje? -->

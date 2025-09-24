@@ -1,10 +1,10 @@
 # Many Players
 
-By using a configuration dictionary and have the starting money be a list, you've started to make your code more general. Now it's time to fully commit to that effort.
+By using a configuration dictionary you've started to make your code more general. Now it's time to fully commit to that effort.
 
 In this assignment, you will adapt your Monopoly simulation so that it can handle **any number of players**.
 
-Start by creating a new file called `monopoly_dicts2.py` and copy your existing functions `simulate_monopoly_games(games, board_config)` and `simulate_monopoly(board_config)` (and all other functions required to run them) over to the new file.
+Start by creating a new file called `monopoly_dicts_multiplayer.py` and copy your existing functions `simulate_monopoly_games(games, board_config)` and `simulate_monopoly(board_config)` (and all other functions required to run them) over to the new file.
 
 ### Assignment
 
@@ -13,10 +13,10 @@ Start by creating a new file called `monopoly_dicts2.py` and copy your existing 
 * You should be able to call the function like this:
 
         board_config = {
-            "board_size": 40,                     # number of spaces on the board
-            "lap_money": 200,                     # money earned when passing Start
-            "starting_money": [1500, 1600, 2000], # starting money for player 1 and player 2
-            "properties": {                       # property prices per board position
+            "board_size": 40,               # number of spaces on the board
+            "lap_money": 200,               # money earned when passing start
+            "starting_money": [1500, 1500], # starting money for player 1 and player 2
+            "properties": {                 # property prices per board position
               1: 60, 3: 60, 5: 200, 6: 100, 8: 100, 9: 120,
               11: 140, 12: 150, 13: 140, 14: 160, 15: 200,
               16: 180, 18: 180, 19: 200, 21: 220, 23: 220,
@@ -25,9 +25,9 @@ Start by creating a new file called `monopoly_dicts2.py` and copy your existing 
               37: 350, 39: 400,
             }
         }
-        starting_money = [1500, 1600, 2000]  # money for [player1, player2, player3]
+        starting_money = [1500, 1600, 2000]
         number_of_games = 1000
-        deltas = simulate_monopoly_games(games, board_config)
+        deltas = simulate_monopoly_games(number_of_games, board_config)
 
   where `deltas` is a list containing the average delta (difference in amount of streets) with respect to player 1.
 
@@ -42,6 +42,8 @@ Start by creating a new file called `monopoly_dicts2.py` and copy your existing 
 * If your previous solution was already designed with flexibility in mind, this assignment will be straightforward. If not, you may need to restructure your code.
 
 ### Testing
+
+There is no `checkpy` test for this exercise. You can, however, test it yourself:
 
 * First, test your new version with exactly **two players**. It should reproduce the same results as your earlier assignment.
 * Then, try running it with more players (e.g. 3 or 4). Do the results make sense?
