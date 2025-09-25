@@ -49,7 +49,7 @@ Now replace the hardcoded values in your code with dictionary lookups (see theor
 * Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
 * Initialize player balances using the starting money from the `board_config` dictionary. The value you should get from the configuration dictionary is a list, where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
 
-> **Important:** Never overwrite or change entries in `board_config` while simulating the game. For example, do *not* use the starting money list itself to track players' current balances. If you update the original list, your code will use these updated values the next time the function is called, causing unexpected outcomes. This is an example of a *pass-by-reference* problem, as described in the *"List slicing and indexing"* theory page of this module.
+> **Important:** Never overwrite or change entries in `board_config` while simulating the game. For example, do *not* use the starting money list itself to track players' current balances. If you update the original list, your code will use these updated values next time the function is called is called with this `board_config` dictionary, causing unexpected outcomes. This is an example of a *pass-by-reference* problem, as described in the *"List slicing and indexing"* theory page of this module.
 >
 > To avoid this, either copy any *mutable* collections of data (such as  lists) before using them, or work directly with the individual values (by indexing the list for each player separately) to avoid the reference altogether.
 
