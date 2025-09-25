@@ -49,9 +49,9 @@ Now replace the hardcoded values in your code with dictionary lookups (see theor
 * Use the lap money from the `board_config` dictionary as the reward when a player completes a lap.
 * Initialize player balances using the starting money from the `board_config` dictionary. The value you should get from the configuration dictionary is a list, where each element corresponds to one player’s starting balance. To set a player’s initial money, take the value from the list at the position that matches that player’s index.
 
-> ⚠️ **Important:** Make sure you don’t overwrite (or add new) entries in `board_config` to track progress. You should not use the starting money list as the actual money balances of players directly. This could cause your code to use these changed values the next time the function is called, which in turn changes the outcome! Instead, you should **copy** the values from the `board_config` dictionary.
+> **Important:** Never overwrite or change entries in `board_config` while simulating the game. For example, do *not* use the starting money list itself to track players' current balances. If you update the original list, your code will use these updated values the next time the function is called, causing unexpected outcomes. This is an example of a *pass-by-reference* problem, as described in the *"List slicing and indexing"* theory page of this module.
 >
-> The configuration dictionary **should not be part of the game state**. It describes the rules and setup of the game, and should never be changed *during* a game.  
+> To avoid this, either copy any *mutable* collections of data (such as  lists) before using them, or work directly with the individual values (by indexing the list for each player separately) to avoid the reference altogether.
 
 Test your code using `checkpy`. Proper implementation of `board_size` can not be tested here yet, and will be tested in the next step. For now, you should pass 8 more tests (for a total of 11). <!--TODO check if this is correct -->
 
