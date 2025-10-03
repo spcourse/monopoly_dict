@@ -13,8 +13,8 @@ When you are confident the counting works, explore the results:
 
 ## Straight to jail
 
-As an extra twist, and to make the plot more interesting, let’s add one special rule: if a player lands on position 29, they must immediately go to jail on position 10. This means that instead of staying on 29, their position is set to 10 for the next turn.
+As an extra twist, and to make the plot more interesting, let’s add one special rule: if a player lands on position 30, they must immediately go to jail on position 10. This means that instead of staying on 30, their position is set to 10 for the next turn.
 
-Implement this rule in a function named `simulate_monopoly_jail()`. Don’t forget to update the visit counts for both tiles! The player landed on 29, but is then moved to 10. This way your histogram will reflect both the chance of hitting the “Go to jail” tile and the fact that jail itself is visited more often.
+Implement this rule in a function named `simulate_monopoly_jail()`. Don’t forget to update the visit counts for both tiles! The player landed on 30, but is then moved to 10. This way your histogram will reflect both the chance of hitting the “Go to jail” tile and the fact that jail itself is visited more often.
 
 Save your plot as `jail_visits.png`. Does this affect the simulation in a way you would expect?
