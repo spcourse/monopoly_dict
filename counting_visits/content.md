@@ -4,7 +4,7 @@ The last thing we will practice with our Monopoly simulation is the counting pat
 
 To prevent this code from affecting your earlier tests, do this step in a separate file named `monopoly_visits.py`. Copy your `simulate_monopoly()` function into the new file, along with any helper functions that it directly calls. _You don’t need to copy everything — only the pieces required to make this function run on its own._
 
-Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that _start_ (position 0) should also be included whenever a player passes or lands on it!
+Inside this function, add a dictionary that will serve as a histogram of visits. Each time a player lands on a tile, update this dictionary so the position is counted. At the end of the game, the dictionary should map every visited position to the number of times it was landed on. Remember that _start_ (position 0) should also be included whenever a player lands on it!
 
 When you are confident the counting works, explore the results:
 
