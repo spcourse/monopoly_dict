@@ -20,6 +20,10 @@ Throughout this exercise, you will be able to use the following `checkpy` comman
 
 Every time you complete a step, you will pass more of the check. Running the tests after this first step should net you three green checks!
 
+> **Note:** This assignment continues with the **two-player version** of Monopoly. `simulate_monopoly()` should return the difference in properties owned by Player 1 and Player 2, and `simulate_monopoly_games()` should return the average of these differences.
+>
+> If you you did the optional *n-players* assignment for monopoly, make sure you do not use the code from that assignment!
+
 ### Step 1: Replacing the function headers
 
 The first thing we will do is to collect important game settings into a dictionary named `board_config`. For now, copy the following dictionary into your `main()` function:
